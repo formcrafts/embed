@@ -1,19 +1,31 @@
 {
-  "name": "formcrafts-embed",
+  "name": "@formcrafts/embed",
   "version": "1.0.0",
   "description": "Library to embed Formcrafts forms",
-  "main": "index.js",
+  "author": "Formcrafts",
+  "license": "MIT",
+  "type": "module",
+  "main": "./lib/embed.cjs",
+  "types": "./lib/embed.d.ts",
+  "module": "./lib/embed.esm.js",
+  "browser": "./lib/embed.umd.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run rollup",
+    "rollup": "rollup -c rollup.config.js"
   },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/formcrafts/embed.git"
   },
-  "author": "Formcrafts",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/formcrafts/embed/issues"
   },
-  "homepage": "https://github.com/formcrafts/embed#readme"
+  "homepage": "https://github.com/formcrafts/embed#readme",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.6",
+    "rollup": "^4.9.6",
+    "rollup-plugin-esbuild": "^6.1.1",
+    "rollup-plugin-import-css": "^3.4.0",
+    "tslib": "^2.6.2"
+  }
 }

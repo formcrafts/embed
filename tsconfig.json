@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "outDir": "./lib",
+    "target": "ESNext",
+    "allowJs": true,
+    "checkJs": true,
+    "esModuleInterop": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "include": ["src/*.ts"]
+}

@@ -1,5 +1,5 @@
-import Drawer from "./drawer";
-import css from "./embed.css?inline";
+import Drawer from "./drawer.ts";
+import css from "./embed.css";
 
 const events: {
   [key: string]: Function[];
