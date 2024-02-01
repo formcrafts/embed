@@ -109,6 +109,21 @@ function adjustIframeHeight(
   iframe.style.position = "static";
 }
 
+export const getValuesFromUrl = (search: string) => {
+  try {
+    const params = new URLSearchParams(search);
+    const values: Record<string, string | string[]> = {};
+    for (const key of params.keys()) {
+      if (key.toLowerCase().startsWith("field")) {
+        values[key.toLowerCase().replace("[]", "")] = params.getAll(key);
+      }
+    }
+    return values;
+  } catch (error) {
+    return {};
+  }
+};
+
 function createEventListeners(
   iframe: HTMLIFrameElement,
   options: EmbedOptions | EmbedPopupOptions,
@@ -119,6 +134,19 @@ function createEventListeners(
     if (iframe.contentWindow !== event.source) return;
     if (!authorizedDomain.includes(event.origin)) return false;
     if (event.data.type === "load") {
+      iframe.contentWindow.postMessage({
+        type: "url",
+        content: window.location.href,
+      }, "*");
+      let prefill = options.values ?? {};
+      const urlPrefill = getValuesFromUrl(window.location.search);
+      if (urlPrefill) {
+        prefill = { ...prefill, ...urlPrefill };
+      }
+      iframe.contentWindow.postMessage({
+        type: "values",
+        content: prefill,
+      }, "*");
       const events = (iframe as any)._formcraftsEvents as any;
       if (events.load) {
         events.load.forEach((callback: any) => callback());
@@ -175,7 +203,6 @@ function createEventListeners(
 export function createInlineForm(options: EmbedOptions) {
   // Check if widget is already created
   if (options.target.querySelector("iframe")) {
-    console.warn("Formcrafts: Widget already created");
     const iframe = options.target.querySelector("iframe") as HTMLIFrameElement;
     return createReturn(iframe, options);
   }
@@ -193,7 +220,6 @@ export function createInlineForm(options: EmbedOptions) {
   options.target.style.width = "100%";
 
   iframe.dataset.src = buildIframeSrc(options);
-  console.log("iframe.dataset.src", iframe.dataset.src);
   iframe.title = "Formcrafts form";
   iframe.style.border = "none";
   iframe.style.width = targetStyles.getPropertyValue("width");
@@ -207,14 +233,6 @@ export function createInlineForm(options: EmbedOptions) {
     iframe.style.maxWidth = "100%";
     iframe.style.transition = "height 0ms linear";
     iframe.style.willChange = "height";
-    iframe.contentWindow?.postMessage({
-      type: "url",
-      content: window.location.href,
-    }, "*");
-    iframe.contentWindow?.postMessage({
-      type: "values",
-      content: options.values,
-    }, "*");
   };
   if (typeof options.width !== "undefined" && options.width !== null) {
     iframe.style.width = `${options.width}px`;
@@ -363,14 +381,6 @@ export function createPopup(options: EmbedPopupOptions) {
   iframe.style.willChange = "height";
   iframe.onload = () => {
     modalContainer.style.visibility = "visible";
-    iframe.contentWindow?.postMessage({
-      type: "url",
-      content: window.location.href,
-    }, "*");
-    iframe.contentWindow?.postMessage({
-      type: "values",
-      content: options.values,
-    }, "*");
   };
 
   modal.appendChild(modalContainer);
