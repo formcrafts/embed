@@ -1,6 +1,6 @@
 {
   "name": "@formcrafts/embed",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Library to embed Formcrafts forms",
   "author": "Formcrafts",
   "license": "MIT",
@@ -9,6 +9,13 @@
   "types": "./lib/embed.d.ts",
   "module": "./lib/embed.esm.js",
   "browser": "./lib/embed.umd.js",
+  "keywords": [
+    "formcrafts",
+    "form",
+    "survey",
+    "embed",
+    "formcrafts-embed"
+  ],
   "scripts": {
     "build": "npm run rollup",
     "rollup": "rollup -c rollup.config.js"

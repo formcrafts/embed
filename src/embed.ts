@@ -17,6 +17,7 @@ type EmbedOptions = {
   seamless?: boolean;
   width?: number | null;
   values?: Record<string, string | string[]>;
+  formBase?: string;
   _params?: URLSearchParams;
 };
 
@@ -25,6 +26,7 @@ type EmbedPopupOptions = {
   width?: number | null;
   appendTo?: HTMLElement;
   values?: Record<string, string | string[]>;
+  formBase?: string;
   _params?: URLSearchParams;
 };
 
@@ -33,13 +35,13 @@ const authorizedDomain = [
   "https://app.beta-formcrafts.com",
   "https://app.localhost:5173",
 ];
-let base = "https://app.localhost:5173";
 
 const iframeShadow =
   "rgba(0, 5, 10, 0.08) 0px 0px 0px 0.5px, rgba(50, 55, 60, 0.04) 2px 3px 2px 0px, rgba(50, 50, 50, 0.03) -2px -2px 2px 0px, rgba(80, 80, 80, 0.176) 0px 7px 5px -7px";
 
 // iframeSrc util
 function buildIframeSrc(options: EmbedOptions) {
+  const base = options.formBase ?? "https://app.formcrafts.com";
   const url = new URL(`${base}/${options.form}`);
   url.searchParams.set("iframe", "true");
 
@@ -56,6 +58,7 @@ function buildIframeSrc(options: EmbedOptions) {
 }
 
 function buildIframeSrcPopup(options: EmbedPopupOptions) {
+  const base = options.formBase ?? "https://app.formcrafts.com";
   const url = new URL(`${base}/${options.form}`);
   url.searchParams.set("iframe", "true");
   if (typeof options._params !== "undefined") {
@@ -163,10 +166,16 @@ function createEventListeners(
   });
 }
 
-// Create widget
+/**
+ * Creates an inline form using an iframe.
+ *
+ * @param {EmbedOptions} options - The options for the form.
+ * @returns {ReturnType} The return type of the createReturn function.
+ */
 export function createInlineForm(options: EmbedOptions) {
   // Check if widget is already created
   if (options.target.querySelector("iframe")) {
+    console.warn("Formcrafts: Widget already created");
     const iframe = options.target.querySelector("iframe") as HTMLIFrameElement;
     return createReturn(iframe, options);
   }
@@ -184,6 +193,7 @@ export function createInlineForm(options: EmbedOptions) {
   options.target.style.width = "100%";
 
   iframe.dataset.src = buildIframeSrc(options);
+  console.log("iframe.dataset.src", iframe.dataset.src);
   iframe.title = "Formcrafts form";
   iframe.style.border = "none";
   iframe.style.width = targetStyles.getPropertyValue("width");

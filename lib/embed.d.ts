@@ -4,6 +4,7 @@ type EmbedOptions = {
     seamless?: boolean;
     width?: number | null;
     values?: Record<string, string | string[]>;
+    formBase?: string;
     _params?: URLSearchParams;
 };
 type EmbedPopupOptions = {
@@ -11,9 +12,16 @@ type EmbedPopupOptions = {
     width?: number | null;
     appendTo?: HTMLElement;
     values?: Record<string, string | string[]>;
+    formBase?: string;
     _params?: URLSearchParams;
 };
 export declare function observeVisibility(targets: Element | Element[], callback: () => void): void;
+/**
+ * Creates an inline form using an iframe.
+ *
+ * @param {EmbedOptions} options - The options for the form.
+ * @returns {ReturnType} The return type of the createReturn function.
+ */
 export declare function createInlineForm(options: EmbedOptions): {
     on(event: string, callback: Function): void;
     values(values: Record<string, string | string[]>): void;
