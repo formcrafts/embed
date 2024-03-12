@@ -150,15 +150,22 @@ function createEventListeners(
     }
     if (event.data.type === "load") {
       const hubspotUtk = getCookie("hubspotutk");
+      // Send hubspotutk to iframe
       if (hubspotUtk) {
         iframe.contentWindow.postMessage({
           type: "hubspotutk",
           content: hubspotUtk,
         }, "*");
       }
+      // Send url to iframe
       iframe.contentWindow.postMessage({
         type: "url",
         content: window.location.href,
+      }, "*");
+      // Send page title to iframe
+      iframe.contentWindow.postMessage({
+        type: "title",
+        content: document.title,
       }, "*");
       let prefill = options.values ?? {};
       iframe.contentWindow.postMessage({
