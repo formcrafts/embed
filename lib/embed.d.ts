@@ -16,7 +16,6 @@ type EmbedPopupOptions = {
     _params?: URLSearchParams;
 };
 export declare function observeVisibility(targets: Element | Element[], callback: () => void): void;
-export declare const getValuesFromUrl: (search: string) => Record<string, string | string[]>;
 /**
  * Creates an inline form using an iframe.
  *

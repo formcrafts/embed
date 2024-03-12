@@ -2,11 +2,13 @@
 
 You can use Formcrafts' embed library `@formcrafts/embed` to embed forms using vanilla JavaScript. The library is available as an npm package, and works well with frameworks like Svelte, React, Vue, and Angular.
 
+Wrks now.
+
 ## Installation
 
 To add the Formcrafts JavaScript library to your project, install it using npm:
 
-```bash
+```shellscript
 npm install @formcrafts/embed --save
 ```
 

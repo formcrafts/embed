@@ -1,6 +1,15 @@
 import Drawer from "./drawer.ts";
 import css from "./embed.css";
 
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
+const debug = typeof window !== "undefined" && window.location &&
+  window.location.search.includes("debug=true");
+
 const events: {
   [key: string]: Function[];
 } = {
@@ -109,21 +118,6 @@ function adjustIframeHeight(
   iframe.style.position = "static";
 }
 
-export const getValuesFromUrl = (search: string) => {
-  try {
-    const params = new URLSearchParams(search);
-    const values: Record<string, string | string[]> = {};
-    for (const key of params.keys()) {
-      if (key.toLowerCase().startsWith("field")) {
-        values[key.toLowerCase().replace("[]", "")] = params.getAll(key);
-      }
-    }
-    return values;
-  } catch (error) {
-    return {};
-  }
-};
-
 function createEventListeners(
   iframe: HTMLIFrameElement,
   options: EmbedOptions | EmbedPopupOptions,
@@ -133,16 +127,39 @@ function createEventListeners(
   window.addEventListener("message", (event) => {
     if (iframe.contentWindow !== event.source) return;
     if (!authorizedDomain.includes(event.origin)) return false;
+    if (debug) {
+      console.debug("Received message", event.data);
+    }
+    if (
+      event.data.type === "ga_event" &&
+      typeof (window as any).gtag !== "undefined"
+    ) {
+      const ga_event = event.data.content;
+      (window as any).gtag("event", ga_event.type, ga_event.attributes);
+    }
+    if (
+      event.data.type === "gtm_event" &&
+      typeof (window as any).dataLayer !== "undefined"
+    ) {
+      const gtm_event = event.data.content;
+      (window as any).dataLayer.push({
+        event: gtm_event.type,
+        ...gtm_event.attributes,
+      });
+    }
     if (event.data.type === "load") {
+      const hubspotUtk = getCookie("hubspotutk");
+      if (hubspotUtk) {
+        iframe.contentWindow.postMessage({
+          type: "hubspotutk",
+          content: hubspotUtk,
+        }, "*");
+      }
       iframe.contentWindow.postMessage({
         type: "url",
         content: window.location.href,
       }, "*");
       let prefill = options.values ?? {};
-      const urlPrefill = getValuesFromUrl(window.location.search);
-      if (urlPrefill) {
-        prefill = { ...prefill, ...urlPrefill };
-      }
       iframe.contentWindow.postMessage({
         type: "values",
         content: prefill,
