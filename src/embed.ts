@@ -275,7 +275,7 @@ export function createInlineForm(options: EmbedOptions) {
     }
   });
 
-  // Add iframe to target
+  options.target.innerHTML = "";
   options.target.appendChild(iframe);
 
   return createReturn(iframe, options);
