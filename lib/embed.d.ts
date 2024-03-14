@@ -1,6 +1,7 @@
 type EmbedOptions = {
     form: string;
     target: HTMLElement;
+    redirectWithin?: boolean;
     seamless?: boolean;
     width?: number | null;
     values?: Record<string, string | string[]>;
@@ -10,6 +11,7 @@ type EmbedOptions = {
 type EmbedPopupOptions = {
     form: string;
     width?: number | null;
+    redirectWithin?: boolean;
     appendTo?: HTMLElement;
     values?: Record<string, string | string[]>;
     formBase?: string;

@@ -24,6 +24,7 @@ type Events = {
 type EmbedOptions = {
   form: string;
   target: HTMLElement;
+  redirectWithin?: boolean;
   seamless?: boolean;
   width?: number | null;
   values?: Record<string, string | string[]>;
@@ -34,6 +35,7 @@ type EmbedOptions = {
 type EmbedPopupOptions = {
   form: string;
   width?: number | null;
+  redirectWithin?: boolean;
   appendTo?: HTMLElement;
   values?: Record<string, string | string[]>;
   formBase?: string;
@@ -167,11 +169,22 @@ function createEventListeners(
         type: "title",
         content: document.title,
       }, "*");
+      // Send window.innerHeight to iframe
+      iframe.contentWindow.postMessage({
+        type: "windowInnerHeight",
+        content: window.innerHeight,
+      }, "*");
       let prefill = options.values ?? {};
       iframe.contentWindow.postMessage({
         type: "values",
         content: prefill,
       }, "*");
+      if (options.redirectWithin) {
+        iframe.contentWindow.postMessage({
+          type: "redirectWithin",
+          content: true,
+        }, "*");
+      }
       const events = (iframe as any)._formcraftsEvents as any;
       if (events.load) {
         events.load.forEach((callback: any) => callback());
@@ -191,6 +204,9 @@ function createEventListeners(
     if (event.data.type === "height") {
       const target = "target" in options ? options.target : null;
       adjustIframeHeight(iframe, event.data.content, target);
+    }
+    if (event.data.type === "redirect") {
+      window.location.href = event.data.content;
     }
     if (event.data.type === "background" && !seamless) {
       iframe.style.background = event.data.content;

@@ -2,8 +2,6 @@
 
 You can use Formcrafts' embed library `@formcrafts/embed` to embed forms using vanilla JavaScript. The library is available as an npm package, and works well with frameworks like Svelte, React, Vue, and Angular.
 
-Wrks now.
-
 ## Installation
 
 To add the Formcrafts JavaScript library to your project, install it using npm:
@@ -30,6 +28,7 @@ const myInlineForm = await createInlineForm({
   target: document.getElementById("element_id"), // Target element
   seamless: true, // Removes form border, shadow, and padding
   width: 500, // Max width of the form
+  redirectWithin: true, // Keep redirect within form frame
   values: {
     field1: "Jack Smith",
     field2: ["Chocolate", "Vanilla"],
@@ -57,6 +56,7 @@ myInlineForm.values({
 const myPopupForm = await createPopup({
   form: "form_key", // Your form key
   width: 500, // Max width of the form
+  redirectWithin: true, // Keep redirect within form frame
   values: {
     field1: "Jack Smith",
     field2: ["Chocolate", "Vanilla"],
