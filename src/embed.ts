@@ -44,7 +44,7 @@ type EmbedPopupOptions = {
 
 const authorizedDomain = [
   "https://app.formcrafts.com",
-  "https://app.beta-formcrafts.com",
+  "https://5173.formcrafts.com",
   "https://app.localhost:5173",
 ];
 
@@ -208,6 +208,27 @@ function createEventListeners(
     if (event.data.type === "redirect") {
       window.location.href = event.data.content;
     }
+    if (event.data.type === "scrollIntoView") {
+      const iframeRect = iframe.getBoundingClientRect();
+      const elementRect = event.data.content;
+      const pseudoElement = document.createElement("div");
+      pseudoElement.style.position = "absolute";
+      pseudoElement.style.top = `${
+        iframeRect.top + elementRect.top + window.scrollY
+      }px`;
+      pseudoElement.style.left = `${
+        iframeRect.left + elementRect.left + window.scrollX
+      }px`;
+      pseudoElement.style.width = `${elementRect.width}px`;
+      pseudoElement.style.height = `${elementRect.height}px`;
+      document.body.appendChild(pseudoElement);
+      pseudoElement.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+      pseudoElement.remove();
+    }
     if (event.data.type === "background" && !seamless) {
       iframe.style.background = event.data.content;
     }
@@ -266,8 +287,10 @@ export function createInlineForm(options: EmbedOptions) {
   iframe.style.width = targetStyles.getPropertyValue("width");
   iframe.style.position = "absolute";
   iframe.style.visibility = "hidden";
+  iframe.scrolling = "no";
   iframe.ariaLabel = "Formcrafts form";
   iframe.name = "formcrafts-iframe";
+  iframe.classList.add("fc-inline-iframe");
   iframe.onload = () => {
     options.target.style.overflow = "initial";
     iframe.style.width = `${options.width}px`;
@@ -420,6 +443,7 @@ export function createPopup(options: EmbedPopupOptions) {
   iframe.style.position = "static";
   iframe.style.transition = "height 0ms linear";
   iframe.style.willChange = "height";
+  iframe.scrolling = "no";
   iframe.onload = () => {
     modalContainer.style.visibility = "visible";
   };
