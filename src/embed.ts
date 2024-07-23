@@ -73,6 +73,7 @@ function buildIframeSrcPopup(options: EmbedPopupOptions) {
   const base = options.formBase ?? "https://app.formcrafts.com";
   const url = new URL(`${base}/${options.form}`);
   url.searchParams.set("iframe", "true");
+  url.searchParams.set("popup", "true");
   if (typeof options._params !== "undefined") {
     options._params.forEach((value, key) => {
       url.searchParams.set(key, value);
@@ -153,37 +154,39 @@ function createEventListeners(
     if (event.data.type === "load") {
       const hubspotUtk = getCookie("hubspotutk");
       // Send hubspotutk to iframe
-      if (hubspotUtk) {
+      if (iframe.contentWindow) {
+        if (hubspotUtk) {
+          iframe.contentWindow.postMessage({
+            type: "hubspotutk",
+            content: hubspotUtk,
+          }, "*");
+        }
+        // Send url to iframe
         iframe.contentWindow.postMessage({
-          type: "hubspotutk",
-          content: hubspotUtk,
+          type: "url",
+          content: window.location.href,
         }, "*");
-      }
-      // Send url to iframe
-      iframe.contentWindow.postMessage({
-        type: "url",
-        content: window.location.href,
-      }, "*");
-      // Send page title to iframe
-      iframe.contentWindow.postMessage({
-        type: "title",
-        content: document.title,
-      }, "*");
-      // Send window.innerHeight to iframe
-      iframe.contentWindow.postMessage({
-        type: "windowInnerHeight",
-        content: window.innerHeight,
-      }, "*");
-      let prefill = options.values ?? {};
-      iframe.contentWindow.postMessage({
-        type: "values",
-        content: prefill,
-      }, "*");
-      if (options.redirectWithin) {
+        // Send page title to iframe
         iframe.contentWindow.postMessage({
-          type: "redirectWithin",
-          content: true,
+          type: "title",
+          content: document.title,
         }, "*");
+        // Send window.innerHeight to iframe
+        iframe.contentWindow.postMessage({
+          type: "windowInnerHeight",
+          content: window.innerHeight,
+        }, "*");
+        let prefill = options.values ?? {};
+        iframe.contentWindow.postMessage({
+          type: "values",
+          content: prefill,
+        }, "*");
+        if (options.redirectWithin) {
+          iframe.contentWindow.postMessage({
+            type: "redirectWithin",
+            content: true,
+          }, "*");
+        }
       }
       const events = (iframe as any)._formcraftsEvents as any;
       if (events.load) {
@@ -264,16 +267,21 @@ function createEventListeners(
  */
 export function createInlineForm(options: EmbedOptions) {
   // Check if widget is already created
+  let iframe;
+  let exists = false;
   if (options.target.querySelector("iframe")) {
-    const iframe = options.target.querySelector("iframe") as HTMLIFrameElement;
-    return createReturn(iframe, options);
+    exists = true;
+    iframe = options.target.querySelector("iframe") as HTMLIFrameElement;
+  } else {
+    iframe = document.createElement("iframe");
+    iframe.style.position = "absolute";
+    iframe.style.visibility = "hidden";
   }
 
   if (typeof options.seamless === "undefined") {
     options.seamless = false;
   }
 
-  const iframe = document.createElement("iframe");
   createEventListeners(iframe, options, "embed");
 
   const targetStyles = window.getComputedStyle(options.target);
@@ -285,8 +293,6 @@ export function createInlineForm(options: EmbedOptions) {
   iframe.title = "Formcrafts form";
   iframe.style.border = "none";
   iframe.style.width = targetStyles.getPropertyValue("width");
-  iframe.style.position = "absolute";
-  iframe.style.visibility = "hidden";
   iframe.scrolling = "no";
   iframe.ariaLabel = "Formcrafts form";
   iframe.name = "formcrafts-iframe";
@@ -304,7 +310,7 @@ export function createInlineForm(options: EmbedOptions) {
   }
   if (!options.seamless) {
     iframe.style.boxShadow = iframeShadow;
-    iframe.style.borderRadius = "4px";
+    iframe.style.borderRadius = "0.5rem";
   }
 
   observeVisibility(iframe, () => {
@@ -314,8 +320,10 @@ export function createInlineForm(options: EmbedOptions) {
     }
   });
 
-  options.target.innerHTML = "";
-  options.target.appendChild(iframe);
+  if (exists === false) {
+    options.target.innerHTML = "";
+    options.target.appendChild(iframe);
+  }
 
   return createReturn(iframe, options);
 }

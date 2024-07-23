@@ -28,8 +28,8 @@
   width: 100%;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
   background-color: #fff;
-  max-height: 80vh;
-  border-radius: 4px;
+  max-height: 70vh;
+  border-radius: 0.5rem;
   overflow-y: auto;
   box-sizing: border-box;
   max-width: 90vw;
@@ -55,7 +55,7 @@
     border-bottom-right-radius: 0px;
     max-width: initial !important;
     width: 100%;
-    max-height: 80%;
+    max-height: 70%;
   }
 }
 @media (max-width: 768px) {
@@ -74,7 +74,7 @@
     border-bottom-right-radius: 0px;
     max-width: initial !important;
     width: 100%;
-    max-height: 80%;
+    max-height: 70%;
   }
 }
 .modal__close {
