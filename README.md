@@ -23,7 +23,7 @@ import { createInlineForm, createPopup } from "@formcrafts/embed"
 ### Initialize the form
 
 ```javascript
-const myInlineForm = await createInlineForm({
+const myInlineForm = createInlineForm({
   form: "form_key", // Your form key
   target: document.getElementById("element_id"), // Target element
   seamless: true, // Removes form border, shadow, and padding
@@ -53,7 +53,7 @@ myInlineForm.values({
 ### Initialize the form
 
 ```javascript
-const myPopupForm = await createPopup({
+const myPopupForm = createPopup({
   form: "form_key", // Your form key
   width: 500, // Max width of the form
   redirectWithin: true, // Keep redirect within form frame
