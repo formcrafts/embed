@@ -9,7 +9,7 @@ function getCookie(name) {
 }
 
 const debug = typeof window !== "undefined" && window.location &&
-  window.location.search.includes("debug=true");
+  window.location.search.indexOf("debug=true") !== -1;
 
 const events: {
   [key: string]: Function[];
@@ -130,7 +130,7 @@ function createEventListeners(
   const seamless = ("seamless" in options && options?.seamless) ?? false;
   window.addEventListener("message", (event) => {
     if (iframe.contentWindow !== event.source) return;
-    if (!authorizedDomain.includes(event.origin)) return false;
+    if (authorizedDomain.indexOf(event.origin) === -1) return false;
     if (debug) {
       console.debug("Received message", event.data);
     }
@@ -238,6 +238,12 @@ function createEventListeners(
     if (event.data.type === "name") {
       iframe.ariaLabel = event.data.content;
       iframe.title = event.data.content;
+    }
+    if (event.data.type === "submitSuccess") {
+      const events = (iframe as any)._formcraftsEvents as any;
+      if (events.submitSuccess) {
+        events.submitSuccess.forEach((callback: any) => callback());
+      }
     }
     if (event.data.type === "success" && type === "embed") {
       const rect = iframe.getBoundingClientRect();
