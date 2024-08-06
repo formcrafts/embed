@@ -152,6 +152,10 @@ function createEventListeners(
       });
     }
     if (event.data.type === "load") {
+      iframe.contentWindow.postMessage({
+        type: "load:ok",
+        content: "ok",
+      }, "*");
       const hubspotUtk = getCookie("hubspotutk");
       // Send hubspotutk to iframe
       if (iframe.contentWindow) {
