@@ -243,10 +243,13 @@ function createEventListeners(
       iframe.ariaLabel = event.data.content;
       iframe.title = event.data.content;
     }
-    if (event.data.type === "submitSuccess") {
+    if (
+      event.data.type === "submit:success" ||
+      event.data.type === "submitSuccess"
+    ) {
       const events = (iframe as any)._formcraftsEvents as any;
-      if (events.submitSuccess) {
-        events.submitSuccess.forEach((callback: any) => callback());
+      if (events["submit:success"]) {
+        events["submit:success"].forEach((callback: any) => callback());
       }
     }
     if (event.data.type === "success" && type === "embed") {
