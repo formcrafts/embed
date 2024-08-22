@@ -43,7 +43,6 @@ You can use the following methods to interact with the inline form:
 ```javascript
 myInlineForm.on("load", (height: number) => {}) // Fires when the form loads
 myInlineForm.on("submit:success", () => {}) // Fires on a successful form submit
-
 myInlineForm.destroy() // Remove the form instance
 myInlineForm.values({
   field1: "New value",
@@ -73,7 +72,6 @@ You can use the following methods to interact with the popup form:
 ```javascript
 myPopupForm.on("load", (height: number) => {}) // Fires when the form loads
 myPopupForm.on("submit:success", () => {}) // Fires on a successful form submit
-
 myPopupForm.load() // Load the form. Can be used to load the form before showing it. Optional.
 myPopupForm.open() // Open the popup
 myPopupForm.close() // Close the popup

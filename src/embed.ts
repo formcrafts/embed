@@ -201,11 +201,19 @@ function createEventListeners(
       const rect = iframe.getBoundingClientRect();
       const isVisible = rect.top >= 0 && rect.top <= window.innerHeight;
       if (!isVisible) {
-        window.scrollBy({
-          top: rect.top -
-            parseFloat(getComputedStyle(document.documentElement).fontSize) * 2,
-          behavior: "smooth",
-        });
+        if (type === "embed") {
+          window.scrollBy({
+            top: rect.top -
+              parseFloat(getComputedStyle(document.documentElement).fontSize) *
+                2,
+            behavior: "smooth",
+          });
+        } else {
+          iframe.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
       }
     }
     if (event.data.type === "height") {
