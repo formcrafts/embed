@@ -320,7 +320,11 @@ export function createInlineForm(options: EmbedOptions) {
   iframe.classList.add("fc-inline-iframe");
   iframe.onload = () => {
     options.target.style.overflow = "initial";
-    iframe.style.width = `${options.width}px`;
+    if (typeof options.width !== "undefined" && options.width !== null) {
+      iframe.style.width = `${options.width}px`;
+    } else {
+      iframe.style.width = "100%";
+    }
     iframe.style.maxWidth = "100%";
     iframe.style.transition = "height 0ms linear";
     iframe.style.willChange = "height";
