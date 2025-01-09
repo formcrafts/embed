@@ -10,7 +10,7 @@
   background: rgba(0, 2, 4, 0.6);
   justify-content: center;
   align-items: center;
-  padding: 10vh 0;
+  padding: 8vh 0;
   overscroll-behavior: none;
   will-change: background-color;
   --slide-up-distance: 8px;
@@ -28,7 +28,7 @@
   width: 100%;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
   background-color: #fff;
-  max-height: 70vh;
+  max-height: 84vh;
   border-radius: 0.5rem;
   overflow-y: auto;
   box-sizing: border-box;
