@@ -129,7 +129,19 @@ function createEventListeners(
 ) {
   const seamless = ("seamless" in options && options?.seamless) ?? false;
   window.addEventListener("message", (event) => {
+    console.log(
+      1,
+      iframe.contentWindow,
+      event.source,
+      iframe.contentWindow === event.source,
+    );
     if (iframe.contentWindow !== event.source) return;
+    console.log(
+      2,
+      authorizedDomain,
+      event.origin,
+      authorizedDomain.indexOf(event.origin),
+    );
     if (authorizedDomain.indexOf(event.origin) === -1) return false;
     if (debug) {
       console.debug("Received message", event.data);
@@ -302,6 +314,9 @@ export function createInlineForm(options: EmbedOptions) {
   if (typeof options.seamless === "undefined") {
     options.seamless = false;
   }
+  if (debug) {
+    console.debug("Creating iframe", iframe);
+  }
 
   createEventListeners(iframe, options, "embed");
 
@@ -461,6 +476,10 @@ export function createPopup(options: EmbedPopupOptions) {
   modalContainer.role = "dialog";
   modalContainer.setAttribute("aria-modal", "true");
   modalContainer.classList.add("fc-modal__container");
+
+  if (debug) {
+    console.debug("Creating popup", modal, modalContainer);
+  }
 
   // Create form iframe
   const iframe = document.createElement("iframe");

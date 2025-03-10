@@ -1,6 +1,6 @@
 {
   "name": "@formcrafts/embed",
-  "version": "1.0.26",
+  "version": "1.0.28",
   "description": "Library to embed Formcrafts forms",
   "author": "Formcrafts",
   "license": "MIT",
@@ -16,6 +16,18 @@
     "embed",
     "formcrafts-embed"
   ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./lib/embed.d.ts",
+        "default": "./lib/embed.esm.js"
+      },
+      "require": {
+        "types": "./lib/embed.d.ts",
+        "default": "./lib/embed.cjs"
+      }
+    }
+  },
   "scripts": {
     "build": "npm run rollup",
     "rollup": "rollup -c rollup.config.js"
