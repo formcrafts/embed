@@ -129,19 +129,7 @@ function createEventListeners(
 ) {
   const seamless = ("seamless" in options && options?.seamless) ?? false;
   window.addEventListener("message", (event) => {
-    console.log(
-      1,
-      iframe.contentWindow,
-      event.source,
-      iframe.contentWindow === event.source,
-    );
     if (iframe.contentWindow !== event.source) return;
-    console.log(
-      2,
-      authorizedDomain,
-      event.origin,
-      authorizedDomain.indexOf(event.origin),
-    );
     if (authorizedDomain.indexOf(event.origin) === -1) return false;
     if (debug) {
       console.debug("Received message", event.data);
