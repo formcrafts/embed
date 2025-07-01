@@ -23,6 +23,7 @@ type Events = {
 
 type EmbedOptions = {
   form: string;
+  lang?: string;
   target: HTMLElement;
   redirectWithin?: boolean;
   seamless?: boolean;
@@ -34,6 +35,7 @@ type EmbedOptions = {
 
 type EmbedPopupOptions = {
   form: string;
+  lang?: string;
   width?: number | null;
   redirectWithin?: boolean;
   appendTo?: HTMLElement;
@@ -56,7 +58,9 @@ function buildIframeSrc(options: EmbedOptions) {
   const base = options.formBase ?? "https://app.formcrafts.com";
   const url = new URL(`${base}/${options.form}`);
   url.searchParams.set("iframe", "true");
-
+  if (typeof options.lang !== "undefined" && options.lang) {
+    url.searchParams.set("lang", options.lang);
+  }
   if (typeof options.seamless !== "undefined" && options.seamless === true) {
     url.searchParams.set("seamless", "true");
   }

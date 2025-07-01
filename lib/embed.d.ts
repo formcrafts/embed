@@ -1,5 +1,6 @@
 type EmbedOptions = {
     form: string;
+    lang?: string;
     target: HTMLElement;
     redirectWithin?: boolean;
     seamless?: boolean;
@@ -10,6 +11,7 @@ type EmbedOptions = {
 };
 type EmbedPopupOptions = {
     form: string;
+    lang?: string;
     width?: number | null;
     redirectWithin?: boolean;
     appendTo?: HTMLElement;
