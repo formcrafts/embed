@@ -17,6 +17,57 @@ const events: {
   load: [] as Function[],
 };
 
+// Global event system for window.on
+declare global {
+  interface Window {
+    on?: (event: string, callback: Function) => void;
+    _formcraftsGlobalEvents?: { [key: string]: Function[] };
+  }
+}
+
+// Initialize global event system
+if (typeof window !== "undefined") {
+  window._formcraftsGlobalEvents = window._formcraftsGlobalEvents || {};
+  window.on = window.on || function (event: string, callback: Function) {
+    if (!window._formcraftsGlobalEvents) {
+      window._formcraftsGlobalEvents = {};
+    }
+    if (!window._formcraftsGlobalEvents[event]) {
+      window._formcraftsGlobalEvents[event] = [];
+    }
+    window._formcraftsGlobalEvents[event].push(callback);
+  };
+}
+
+// Helper function to dispatch global events
+function dispatchGlobalEvent(eventName: string, form_id: string, data?: any) {
+  if (typeof window !== "undefined") {
+    const globalEventName = `formcrafts:${eventName}`;
+
+    // Dispatch DOM event for window.addEventListener
+    const customEvent = new CustomEvent(globalEventName, {
+      detail: { form_id, data },
+    });
+
+    console.log("Dispatching global event:", globalEventName, customEvent);
+    window.dispatchEvent(customEvent);
+
+    // Also support legacy window.on method
+    if (window._formcraftsGlobalEvents) {
+      const callbacks = window._formcraftsGlobalEvents[globalEventName];
+      if (callbacks && callbacks.length > 0) {
+        callbacks.forEach((callback) => {
+          try {
+            callback({ form_id, data });
+          } catch (error) {
+            console.error("Error in global event callback:", error);
+          }
+        });
+      }
+    }
+  }
+}
+
 type Events = {
   [key: string]: Function[];
 };
@@ -200,6 +251,8 @@ function createEventListeners(
       if (events.load) {
         events.load.forEach((callback: any) => callback());
       }
+      // Dispatch global load event
+      dispatchGlobalEvent("load", options.form);
     }
     if (event.data.type === "page") {
       const rect = iframe.getBoundingClientRect();
@@ -265,6 +318,8 @@ function createEventListeners(
           callback(event.data.content)
         );
       }
+      // Dispatch global submit:success event
+      dispatchGlobalEvent("submit:success", options.form, event.data.content);
     }
     if (event.data.type === "success" && type === "embed") {
       const rect = iframe.getBoundingClientRect();

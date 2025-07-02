@@ -1,3 +1,11 @@
+declare global {
+    interface Window {
+        on?: (event: string, callback: Function) => void;
+        _formcraftsGlobalEvents?: {
+            [key: string]: Function[];
+        };
+    }
+}
 type EmbedOptions = {
     form: string;
     lang?: string;
