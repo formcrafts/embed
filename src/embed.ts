@@ -49,7 +49,6 @@ function dispatchGlobalEvent(eventName: string, form_id: string, data?: any) {
       detail: { form_id, data },
     });
 
-    console.log("Dispatching global event:", globalEventName, customEvent);
     window.dispatchEvent(customEvent);
 
     // Also support legacy window.on method
