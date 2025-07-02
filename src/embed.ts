@@ -261,7 +261,9 @@ function createEventListeners(
     ) {
       const events = (iframe as any)._formcraftsEvents as any;
       if (events["submit:success"]) {
-        events["submit:success"].forEach((callback: any) => callback());
+        events["submit:success"].forEach((callback) =>
+          callback(event.data.content)
+        );
       }
     }
     if (event.data.type === "success" && type === "embed") {
