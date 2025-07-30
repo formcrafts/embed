@@ -277,7 +277,11 @@ function createEventListeners(
       adjustIframeHeight(iframe, event.data.content, target);
     }
     if (event.data.type === "redirect") {
-      window.location.href = event.data.content;
+      try {
+        window.top.location.href = event.data.content;
+      } catch (e) {
+        window.location.href = event.data.content;
+      }
     }
     if (event.data.type === "scrollIntoView") {
       const iframeRect = iframe.getBoundingClientRect();
