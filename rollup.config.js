@@ -27,14 +27,14 @@ export default defineConfig([
     {
       file: 'lib/embed.umd.js',
       format: 'umd',
-      name: 'embed',
+      name: 'formcrafts',
       sourcemap: true,
       banner
     },
     {
       file: 'lib/embed.min.js',
       format: 'umd',
-      name: 'embed',
+      name: 'formcrafts',
       sourcemap: true,
       banner,
       plugins: [esbuild({
@@ -47,7 +47,7 @@ export default defineConfig([
     {
       file: 'lib/embed.cjs',
       format: 'cjs',
-      name: 'embed',
+      name: 'formcrafts',
       sourcemap: true,
       banner
     }],
