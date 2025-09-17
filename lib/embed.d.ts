@@ -19,6 +19,7 @@ type EmbedOptions = {
 };
 type EmbedPopupOptions = {
     form: string;
+    idSuffix?: string;
     lang?: string;
     width?: number | null;
     redirectWithin?: boolean;
@@ -40,6 +41,7 @@ export declare function createInlineForm(options: EmbedOptions): {
     destroy(): void;
 };
 export declare function createPopup(options: EmbedPopupOptions): {
+    elementId: string;
     on(event: string, callback: Function): void;
     load(): void;
     values(values: Record<string, string | string[]>): void;

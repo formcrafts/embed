@@ -85,6 +85,7 @@ type EmbedOptions = {
 
 type EmbedPopupOptions = {
   form: string;
+  idSuffix?: string;
   lang?: string;
   width?: number | null;
   redirectWithin?: boolean;
@@ -442,11 +443,16 @@ function createReturn(iframe: HTMLIFrameElement, options: EmbedOptions) {
   return instance;
 }
 
-function createPopupReturn(drawer: Drawer, config: EmbedPopupOptions) {
+function createPopupReturn(
+  drawer: Drawer,
+  modal: HTMLElement,
+  config: EmbedPopupOptions,
+) {
   const iframe = drawer.drawerElement.querySelector(
     "iframe",
   ) as HTMLIFrameElement;
   const instance = {
+    elementId: modal.id,
     on(event: string, callback: Function) {
       const events = (iframe as any)._formcraftsEvents as any;
       events[event] = events[event] || [];
@@ -500,13 +506,15 @@ export function createPopup(options: EmbedPopupOptions) {
   const width = typeof options.width === "undefined" ? 500 : options.width;
 
   // Create modal elements
-  const modalId = `fc-modal-${options.form}`;
+  const modalId = `fc-modal-${options.form}-${
+    options.idSuffix ? options.idSuffix : Math.floor(Math.random() * 10000)
+  }`;
 
   // Check if modal exists
   if (document.getElementById(modalId)) {
     const existingModal = document.getElementById(modalId);
     const existingDrawer = (existingModal as any).drawerInstance as Drawer;
-    return createPopupReturn(existingDrawer, options);
+    return createPopupReturn(existingDrawer, existingModal, options);
   }
 
   // Get / create style
@@ -561,5 +569,5 @@ export function createPopup(options: EmbedPopupOptions) {
     document.body.appendChild(modal);
   }
   const myDrawer = new Drawer(modal, modalConfig);
-  return createPopupReturn(myDrawer, options);
+  return createPopupReturn(myDrawer, modal, options);
 }
