@@ -337,8 +337,8 @@ function createEventListeners(
       }
     }
     if (event.data.type === "close" && type === "popup" && options) {
-      const modalId = `fc-modal-${options.form}`;
-      const existingModal = document.getElementById(modalId);
+      // Find parent element with class .fc-modal
+      const existingModal = iframe.closest(".fc-modal");
       const existingDrawer = (existingModal as any).drawerInstance as Drawer;
       existingDrawer.close();
     }
