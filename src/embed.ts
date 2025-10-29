@@ -80,6 +80,7 @@ type EmbedOptions = {
   width?: number | null;
   values?: Record<string, string | string[]>;
   formBase?: string;
+  accessCode?: string;
   _params?: URLSearchParams;
 };
 
@@ -92,6 +93,7 @@ type EmbedPopupOptions = {
   appendTo?: HTMLElement;
   values?: Record<string, string | string[]>;
   formBase?: string;
+  accessCode?: string;
   _params?: URLSearchParams;
 };
 
@@ -115,6 +117,9 @@ function buildIframeSrc(options: EmbedOptions) {
   if (typeof options.seamless !== "undefined" && options.seamless === true) {
     url.searchParams.set("seamless", "true");
   }
+  if (typeof options.accessCode !== "undefined" && options.accessCode) {
+    url.searchParams.set("access_code", options.accessCode);
+  }
   if (typeof options._params !== "undefined") {
     options._params.forEach((value, key) => {
       url.searchParams.set(key, value);
@@ -129,6 +134,9 @@ function buildIframeSrcPopup(options: EmbedPopupOptions) {
   const url = new URL(`${base}/${options.form}`);
   url.searchParams.set("iframe", "true");
   url.searchParams.set("popup", "true");
+  if (typeof options.accessCode !== "undefined" && options.accessCode) {
+    url.searchParams.set("access_code", options.accessCode);
+  }
   if (typeof options._params !== "undefined") {
     options._params.forEach((value, key) => {
       url.searchParams.set(key, value);

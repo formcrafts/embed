@@ -15,6 +15,7 @@ type EmbedOptions = {
     width?: number | null;
     values?: Record<string, string | string[]>;
     formBase?: string;
+    accessCode?: string;
     _params?: URLSearchParams;
 };
 type EmbedPopupOptions = {
@@ -26,6 +27,7 @@ type EmbedPopupOptions = {
     appendTo?: HTMLElement;
     values?: Record<string, string | string[]>;
     formBase?: string;
+    accessCode?: string;
     _params?: URLSearchParams;
 };
 export declare function observeVisibility(targets: Element | Element[], callback: () => void): void;
