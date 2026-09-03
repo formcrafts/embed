@@ -129,6 +129,23 @@ function buildIframeSrc(options: EmbedOptions) {
   return url.href;
 }
 
+/**
+ * Compares two iframe URLs ignoring query parameters and hash.
+ * Used to tell whether an iframe already in the DOM points at the same form.
+ */
+function sameFormUrl(a: string, b: string) {
+  if (!a || !b) return false;
+  try {
+    const urlA = new URL(a, window.location.href);
+    const urlB = new URL(b, window.location.href);
+    return urlA.origin === urlB.origin &&
+      urlA.pathname.replace(/\/$/, "").toLowerCase() ===
+        urlB.pathname.replace(/\/$/, "").toLowerCase();
+  } catch (e) {
+    return false;
+  }
+}
+
 function buildIframeSrcPopup(options: EmbedPopupOptions) {
   const base = options.formBase ?? "https://app.formcrafts.com";
   const url = new URL(`${base}/${options.form}`);
@@ -386,7 +403,12 @@ export function createInlineForm(options: EmbedOptions) {
   options.target.style.justifyContent = "stretch";
   options.target.style.width = "100%";
 
-  iframe.dataset.src = buildIframeSrc(options);
+  const iframeSrc = buildIframeSrc(options);
+  // An adopted iframe that already points at this form is left alone:
+  // assigning src reloads the form even when the URL is identical.
+  if (!exists || !sameFormUrl(iframe.src, iframeSrc)) {
+    iframe.dataset.src = iframeSrc;
+  }
   iframe.title = "Formcrafts form";
   iframe.style.border = "none";
   iframe.style.width = targetStyles.getPropertyValue("width");
