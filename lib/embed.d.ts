@@ -15,6 +15,8 @@ type EmbedOptions = {
     width?: number | null;
     values?: Record<string, string | string[]>;
     formBase?: string;
+    /** HTTP(S) page URL override for embeds inside isolated wrappers. */
+    pageUrl?: string;
     accessCode?: string;
     _params?: URLSearchParams;
 };
@@ -27,6 +29,8 @@ type EmbedPopupOptions = {
     appendTo?: HTMLElement;
     values?: Record<string, string | string[]>;
     formBase?: string;
+    /** HTTP(S) page URL override for embeds inside isolated wrappers. */
+    pageUrl?: string;
     accessCode?: string;
     _params?: URLSearchParams;
 };

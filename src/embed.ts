@@ -1,15 +1,59 @@
 import Drawer from "./drawer.ts";
 import css from "./embed.css";
 
-function getCookie(name) {
+const debug = typeof window !== "undefined" && window.location &&
+  window.location.search.indexOf("debug=true") !== -1;
+
+function getCookie(name: string | null) {
   if (typeof document === "undefined") return;
-  const value = `; ${document.cookie}`;
+  let value: string;
+  try {
+    value = `; ${document.cookie}`;
+  } catch {
+    // Sandboxed embeds may not have access to cookies.
+    return;
+  }
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop().split(";").shift();
 }
 
-const debug = typeof window !== "undefined" && window.location &&
-  window.location.search.indexOf("debug=true") !== -1;
+function asPageUrl(value: string): string | null {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:"
+      ? url.href
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function getPageUrl(override?: string): string | null {
+  const explicitUrl = override ? asPageUrl(override) : null;
+  if (explicitUrl) return explicitUrl;
+
+  let current: Window = window;
+  let referrer: string | null = null;
+
+  while (true) {
+    try {
+      const url = asPageUrl(current.location.href);
+      if (debug) console.log("Current URL:", current.location.href);
+      if (debug) console.log("Referrer:", current.document.referrer);
+      if (url) return url;
+
+      // Retain a fallback if the next parent is inaccessible.
+      referrer = asPageUrl(current.document.referrer) ?? referrer;
+      if (current.parent === current) break;
+      current = current.parent;
+    } catch {
+      // Sandboxed or cross-origin parent.
+      break;
+    }
+  }
+
+  return referrer;
+}
 
 const events: {
   [key: string]: Function[];
@@ -80,6 +124,8 @@ type EmbedOptions = {
   width?: number | null;
   values?: Record<string, string | string[]>;
   formBase?: string;
+  /** HTTP(S) page URL override for embeds inside isolated wrappers. */
+  pageUrl?: string;
   accessCode?: string;
   _params?: URLSearchParams;
 };
@@ -93,6 +139,8 @@ type EmbedPopupOptions = {
   appendTo?: HTMLElement;
   values?: Record<string, string | string[]>;
   formBase?: string;
+  /** HTTP(S) page URL override for embeds inside isolated wrappers. */
+  pageUrl?: string;
   accessCode?: string;
   _params?: URLSearchParams;
 };
@@ -245,11 +293,14 @@ function createEventListeners(
             content: hubspotUtk,
           }, "*");
         }
-        // Send url to iframe
-        iframe.contentWindow.postMessage({
-          type: "url",
-          content: window.location.href,
-        }, "*");
+        // Send only a usable page URL; otherwise keep the form's own URL.
+        const pageUrl = getPageUrl(options.pageUrl);
+        if (pageUrl) {
+          iframe.contentWindow.postMessage({
+            type: "url",
+            content: pageUrl,
+          }, "*");
+        }
         // Send page title to iframe
         iframe.contentWindow.postMessage({
           type: "title",
